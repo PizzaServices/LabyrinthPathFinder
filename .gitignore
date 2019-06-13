@@ -30,3 +30,19 @@
 *.exe
 *.out
 *.app
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Files built by Visual Studio
+*.tlog
+*.log
+*.ilk
+*.db
+*.opendb
+*.pdb
+*.idb
