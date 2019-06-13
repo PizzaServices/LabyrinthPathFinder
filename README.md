@@ -8,4 +8,4 @@ The path must always be specified with \\ instead of simple \, since this is use
 
 | Input      | Output      | 
 |------------|-------------| 
-| <img src="https://github.com/PizzaServices/LabyrinthPathFinder/blob/master/pictures/input.png" width="250"> | <img src="https://github.com/PizzaServices/LabyrinthPathFinder/blob/master/pictures/output.png" width="250"> |
+| <img src="https://github.com/PizzaServices/LabyrinthPathFinder/blob/master/pictures/input.png"> | <img src="https://github.com/PizzaServices/LabyrinthPathFinder/blob/master/pictures/output.png"> |
