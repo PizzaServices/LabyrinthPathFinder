@@ -46,3 +46,7 @@
 *.opendb
 *.pdb
 *.idb
+*.ipch
+src/LabyrinthPathFinder/x64/Release/LabyrinthPathFinder.vcxproj.FileListAbsolute.txt
+*.iobj
+*.ipdb

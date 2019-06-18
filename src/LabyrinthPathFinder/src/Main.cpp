@@ -4,16 +4,17 @@
 #include <iostream>
 #include <set>
 #include <windows.h>
-#include <algorithm>
 #include <memory>
+#include <chrono>
 
 #include "Digraph.h"
 
-int main() {
-	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+auto main() -> int
+{
+	const auto h_console = GetStdHandle(STD_OUTPUT_HANDLE);
 
-	int width = 0;
-	int height = 0;
+	size_t width = 0;
+	size_t height = 0;
 	std::string path;
 
 	std::cout << "Width: " << std::endl;
@@ -24,105 +25,111 @@ int main() {
 	std::cout << "Path: " << std::endl;
 	std::cin >> path;
 
+	auto start_one = std::chrono::high_resolution_clock::now();
+
 	std::ifstream file(path);
 	std::string line;
 
 	std::vector<std::vector<char>> chars(height, std::vector<char>(width));
-	std::unique_ptr<Digraph> graph = std::make_unique<Digraph>(height * width);
+	const auto graph = std::make_unique<digraph>(height * width);
 
-	int rowCounter = 0;
-	int columCounter = 0;
+	auto row_counter = 0;
+	auto column_counter = 0;
 
 	while (std::getline(file, line))
 	{
 		for (auto character : line) {
-			chars[rowCounter][columCounter] = character;
-			++columCounter;
+			chars[row_counter][column_counter] = character;
+			++column_counter;
 		}
-		columCounter = 0;
-		++rowCounter;
+		column_counter = 0;
+		++row_counter;
 	}
 
-	for (int i = 0; i < chars.size(); ++i) {
-		for (int j = 0; j < chars[i].size(); ++j) {
+	for (size_t i = 0; i < chars.size(); ++i) {
+		for (size_t j = 0; j < chars[i].size(); ++j) {
 
 			if (chars[i][j] == '#')
 				continue;
 
-			int v = i * width + j;
-			int w = 0;
+			const auto v = i * width + j;
+			auto w = 0;
 
 			// Add bottom
-			if (i - 1 >= 0) {
-				if (chars[i - 1][j] != '#') {
-					w = (i - 1) * width + j;
-					graph->addEdge(v, w);
-				}
+			if (i - 1 >= 0 && chars[i - 1][j] != '#') {
+				w = (i - 1) * width + j;
+				graph->add_edge(v, w);
 			}
 
 			// Add front
-			if (j - 1 >= 0) {
-				if (chars[i][j - 1] != '#') {
-					w = i * width + (j - 1);
-					graph->addEdge(v, w);
-				}
+			if (j - 1 >= 0 && chars[i][j - 1] != '#') {
+				w = i * width + (j - 1);
+				graph->add_edge(v, w);
 			}
 
 			// Add back
-			if (j + 1 < width) {
-				if (chars[i][j + 1] != '#') {
-					w = i * width + (j + 1);
-					graph->addEdge(v, w);
-				}
+			if (j + 1 < width && chars[i][j + 1] != '#') {
+				w = i * width + (j + 1);
+				graph->add_edge(v, w);
 			}
 
 			// Add top
-			if (i + 1 < height) {
-				if (chars[i + 1][j] != '#') {
-					w = (i + 1) * width + j;
-					graph->addEdge(v, w);
-				}
+			if (i + 1 < height && chars[i + 1][j] != '#') {
+				w = (i + 1) * width + j;
+				graph->add_edge(v, w);
 			}
 
 		}
 	}
 
-	int startRow = -1;
-	int startColumn = -1;
+	size_t start_row = -1;
+	size_t start_column = -1;
 
-	int destinationRow = -1;
-	int destinationColumn = -1;
+	size_t destination_row = -1;
+	size_t destination_column = -1;
+
+	auto end_one = std::chrono::high_resolution_clock::now();
 
 	std::cout << "Starting row (not zero based): " << std::endl;
-	std::cin >> startRow;
+	std::cin >> start_row;
 	std::cout << "Starting column (not zero based): " << std::endl;
-	std::cin >> startColumn;
+	std::cin >> start_column;
 
 	std::cout << "Destination row (not zero based): " << std::endl;
-	std::cin >> destinationRow;
+	std::cin >> destination_row;
 	std::cout << "Destination column (not zero based): " << std::endl;
-	std::cin >> destinationColumn;
+	std::cin >> destination_column;
 
-	int startPosition = (startRow - 1) * width + (startColumn - 1);
-	int destinationPostion = (destinationRow - 1) * width + (destinationColumn - 1);
+	auto start_two = std::chrono::high_resolution_clock::now();
 
-	graph->bfs(startPosition);
-	auto hasPath = graph->hasPathTo(destinationPostion);
+	const auto start_position = (start_row - 1) * width + (start_column - 1);
+	const auto destination_position = (destination_row - 1) * width + (destination_column - 1);
 
-	if (hasPath) {
-		auto steps = graph->pathTo(destinationPostion);
+	graph->bfs(start_position, destination_position);
+	const auto has_path = graph->has_path_to(destination_position);
+
+	if (has_path) {
+		auto steps = graph->path_to(destination_position);
+
+		auto end_two = std::chrono::high_resolution_clock::now();
 
 		system("CLS");
 
-		for (int i = 0; i < chars.size(); ++i) {
-			for (int j = 0; j < chars[i].size(); ++j) {
-				int v = i * width + j;
+		auto result = std::chrono::duration<double, std::milli>((end_one - start_one) + (end_two - start_two));
+
+		std::cout << "The past time is " << result.count() << " milliseconds" << std::endl;
+		std::cout << std::endl;
+		std::cout << std::endl;
+
+		for (size_t i = 0; i < chars.size(); ++i) {
+			for (size_t j = 0; j < chars[i].size(); ++j) {
+				const auto v = i * width + j;
 				if (steps->find(v) != steps->end()) {
-					SetConsoleTextAttribute(hConsole, 12);
+					SetConsoleTextAttribute(h_console, 12);
 					std::cout << "P";
 				}
 				else {
-					SetConsoleTextAttribute(hConsole, 15);
+					SetConsoleTextAttribute(h_console, 15);
 					std::cout << chars[i][j];
 				}
 			}
